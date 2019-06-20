@@ -3,6 +3,8 @@ import Particles from 'react-particles-js';
 import Clarifai from 'clarifai';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Navigation from './components/Navigation/Navigation';
+import Signin from './components/Signin/Signin';
+import Register from './components/Register/Register';
 import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
@@ -30,7 +32,9 @@ class App extends Component {
     this.state = {
       input: '',
       imageUrl: '',
-      box: {}
+      box: {},
+      route: 'signin',
+      isSignedIn: false
     }
   }
 
@@ -61,10 +65,18 @@ onButtonSubmit = () => {
   this.setState({imageUrl: this.state.input})
   app.models.predict(
 Clarifai.FACE_DETECT_MODEL,
-    // URL
-    this.state.input)
+this.state.input)
 .then(response => this.displayFaceBox(this.calculateFaceLocation(response)))
 .catch(err => console.log(err));
+}
+
+OnRouteCange = (route) => {
+  if (route === 'signout') {
+    this.setState({isSignedIn: false})
+  }else if(route === 'home') {
+    this.setState({isSignedIn: true})
+  }
+  this.setState({route: route});
 }
 
 	render() {
@@ -73,17 +85,27 @@ Clarifai.FACE_DETECT_MODEL,
     	 <Particles className='particles'
         params={ particleOptions } 
         />
-      <Navigation />
-      <Logo />
-      <Rank />
-      <ImageLinkForm 
-      onInputChange={ this.onInputChange }
-      onButtonSubmit={ this.onButtonSubmit }
-      />
-      <FaceRecognition
-      box={ this.state.box } 
-      imageUrl={this.state.imageUrl}
-      />
+        
+      <Navigation isSignedIn={this.state.isSignedIn} OnRouteCange={ this.OnRouteCange } />
+      {this.state.route === 'home'
+      ?<div>
+        <Logo />
+        <Rank />
+        <ImageLinkForm 
+        onInputChange={ this.onInputChange }
+        onButtonSubmit={ this.onButtonSubmit }
+        />
+        <FaceRecognition
+        box={ this.state.box } 
+        imageUrl={this.state.imageUrl}
+        />
+        </div>
+        :(
+          this.state.route === 'signin'?
+          <Signin OnRouteCange={this.OnRouteCange} />
+          :<Register OnRouteCange={this.OnRouteCange} />
+        )
+      }
     </div>
   	);
 	}
