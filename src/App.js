@@ -58,11 +58,11 @@ displayFaceBox = (box) => {
 }
 
 onInputChange = (event) => {
-  this.setState({input: event.target.value});
+  this.setState({ input: event.target.value });
 }
 
 onButtonSubmit = () => {
-  this.setState({imageUrl: this.state.input})
+  this.setState({ imageUrl: this.state.input })
   app.models.predict(
 Clarifai.FACE_DETECT_MODEL,
 this.state.input)
@@ -72,22 +72,23 @@ this.state.input)
 
 OnRouteCange = (route) => {
   if (route === 'signout') {
-    this.setState({isSignedIn: false})
+    this.setState({ isSignedIn: false })
   }else if(route === 'home') {
-    this.setState({isSignedIn: true})
+    this.setState({ isSignedIn: true })
   }
-  this.setState({route: route});
+  this.setState({ route: route });
 }
 
 	render() {
+    const { isSignedIn, imageUrl, route, box } = this.state
   return (
     <div className="App">
     	 <Particles className='particles'
         params={ particleOptions } 
         />
         
-      <Navigation isSignedIn={this.state.isSignedIn} OnRouteCange={ this.OnRouteCange } />
-      {this.state.route === 'home'
+      <Navigation isSignedIn={ isSignedIn } OnRouteCange={ this.OnRouteCange } />
+      { route === 'home'
       ?<div>
         <Logo />
         <Rank />
@@ -96,14 +97,14 @@ OnRouteCange = (route) => {
         onButtonSubmit={ this.onButtonSubmit }
         />
         <FaceRecognition
-        box={ this.state.box } 
-        imageUrl={this.state.imageUrl}
+        box={ box } 
+        imageUrl={ imageUrl }
         />
         </div>
         :(
-          this.state.route === 'signin'?
-          <Signin OnRouteCange={this.OnRouteCange} />
-          :<Register OnRouteCange={this.OnRouteCange} />
+          route === 'signin'?
+          <Signin OnRouteCange={ this.OnRouteCange } />
+          :<Register OnRouteCange={ this.OnRouteCange } />
         )
       }
     </div>
